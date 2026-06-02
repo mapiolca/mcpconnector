@@ -40,6 +40,9 @@ class McpConnectorLog
 		if (!getDolGlobalInt('MCP_CONNECTOR_LOG_ENABLED', 1)) {
 			return 1;
 		}
+		if ($this->ensureTable() < 0) {
+			return -1;
+		}
 
 		$input = $data['input_json'] ?? null;
 		if (is_array($input) || is_object($input)) {
@@ -85,6 +88,10 @@ class McpConnectorLog
 	 */
 	public function fetchAll(array $filters = array(), $limit = 50, $offset = 0)
 	{
+		if ($this->ensureTable() < 0) {
+			return -1;
+		}
+
 		$sql = 'SELECT l.rowid, l.entity, l.datec, l.fk_user, l.tool_name, l.endpoint, l.input_json, l.output_status, l.http_code, l.error_message, l.ip, l.user_agent, l.duration_ms, u.login';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'mcpconnector_log as l';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON u.rowid = l.fk_user';
@@ -134,6 +141,10 @@ class McpConnectorLog
 	 */
 	public function purgeOld($retentionDays)
 	{
+		if ($this->ensureTable() < 0) {
+			return -1;
+		}
+
 		$retentionDays = max(1, (int) $retentionDays);
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'mcpconnector_log';
 		$sql .= ' WHERE datec < DATE_SUB(NOW(), INTERVAL '.$retentionDays.' DAY)';
@@ -145,6 +156,56 @@ class McpConnectorLog
 		}
 
 		return $this->db->affected_rows($resql);
+	}
+
+	/**
+	 * Ensure the log table exists for already-enabled installations.
+	 *
+	 * @return int
+	 */
+	public function ensureTable()
+	{
+		$table = MAIN_DB_PREFIX.'mcpconnector_log';
+		$resql = $this->db->query("SHOW TABLES LIKE '".$this->db->escape($table)."'");
+		if ($resql && $this->db->num_rows($resql) > 0) {
+			return 1;
+		}
+
+		$sql = 'CREATE TABLE '.$table.' (';
+		$sql .= 'rowid integer AUTO_INCREMENT PRIMARY KEY,';
+		$sql .= 'entity integer NOT NULL DEFAULT 1,';
+		$sql .= 'datec datetime NOT NULL,';
+		$sql .= 'tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,';
+		$sql .= 'fk_user integer DEFAULT NULL,';
+		$sql .= 'tool_name varchar(128) NOT NULL,';
+		$sql .= 'endpoint varchar(255) DEFAULT NULL,';
+		$sql .= 'input_json mediumtext DEFAULT NULL,';
+		$sql .= "output_status varchar(32) NOT NULL DEFAULT 'OK',";
+		$sql .= 'http_code integer DEFAULT NULL,';
+		$sql .= 'error_message text DEFAULT NULL,';
+		$sql .= 'ip varchar(64) DEFAULT NULL,';
+		$sql .= 'user_agent varchar(255) DEFAULT NULL,';
+		$sql .= 'duration_ms integer DEFAULT NULL';
+		$sql .= ') ENGINE=innodb';
+
+		if (!$this->db->query($sql)) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		foreach (array(
+			'idx_mcpconnector_log_entity' => 'entity',
+			'idx_mcpconnector_log_datec' => 'datec',
+			'idx_mcpconnector_log_tool_name' => 'tool_name',
+			'idx_mcpconnector_log_status' => 'output_status',
+		) as $index => $column) {
+			if (!$this->db->query('ALTER TABLE '.$table.' ADD INDEX '.$index.' ('.$column.')')) {
+				$this->error = $this->db->lasterror();
+				return -1;
+			}
+		}
+
+		return 1;
 	}
 
 	/**

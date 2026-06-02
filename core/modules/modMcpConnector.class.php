@@ -50,9 +50,6 @@ class modMcpConnector extends DolibarrModules
 
 		$this->config_page_url = array(
 			'setup.php@mcpconnector',
-			'compatibility.php@mcpconnector',
-			'installassistant.php@mcpconnector',
-			'logs.php@mcpconnector',
 		);
 
 		$this->dirs = array('/mcpconnector/temp');
@@ -68,6 +65,33 @@ class modMcpConnector extends DolibarrModules
 		$this->initConstants();
 		$this->initRights();
 		$this->initMenus();
+	}
+
+	/**
+	 * Module activation.
+	 *
+	 * @param string $options Options
+	 * @return int
+	 */
+	public function init($options = '')
+	{
+		$result = $this->_load_tables('/mcpconnector/sql/');
+		if ($result < 0) {
+			return -1;
+		}
+
+		return $this->_init(array(), $options);
+	}
+
+	/**
+	 * Module removal.
+	 *
+	 * @param string $options Options
+	 * @return int
+	 */
+	public function remove($options = '')
+	{
+		return $this->_remove(array(), $options);
 	}
 
 	/**
