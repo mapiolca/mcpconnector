@@ -108,19 +108,20 @@ print '<form method="POST" action="'.dol_escape_htmltag($_SERVER['PHP_SELF']).'"
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="save">';
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><td colspan="2">'.$langs->trans('MCPConnectorSetup').'</td></tr>';
-print '<tr><td>'.$langs->trans('MCPConnectorEnabled').'</td><td><input type="checkbox" name="enabled" value="1"'.(!empty($config['enabled']) ? ' checked' : '').'></td></tr>';
-print '<tr><td>'.$langs->trans('MCPConnectorReadOnly').'</td><td><input type="checkbox" checked disabled> '.$langs->trans('MCPConnectorReadOnlyForced').'<input type="hidden" name="readonly" value="1"></td></tr>';
-print '<tr><td>'.$langs->trans('MCPConnectorDolibarrBaseUrl').'</td><td><input class="minwidth500" type="text" name="dolibarr_base_url" value="'.dol_escape_htmltag($config['dolibarr_base_url']).'"></td></tr>';
-print '<tr><td>'.$langs->trans('MCPConnectorDolibarrApiUrl').'</td><td><input class="minwidth500" type="text" name="dolibarr_api_url" value="'.dol_escape_htmltag($config['dolibarr_api_url']).'"></td></tr>';
-print '<tr><td>'.$langs->trans('MCPConnectorApiUser').'</td><td>'.$form->select_dolusers($config['api_user_id'], 'api_user_id', 1, null, 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth500').'</td></tr>';
-print '<tr><td>'.$langs->trans('MCPConnectorApiKey').'</td><td><input class="minwidth300" type="password" name="api_key" value="" autocomplete="new-password"> '.(McpConnectorConfig::hasApiKey() ? $langs->trans('MCPConnectorSecretStored') : $langs->trans('MCPConnectorNoApiKeyConfigured')).'<br><span class="opacitymedium">'.$langs->trans('MCPConnectorApiKeyHelp').'</span></td></tr>';
+print '<tr class="liste_titre"><td colspan="3">'.$langs->trans('MCPConnectorSetup').'</td></tr>';
+print '<tr class="liste_titre"><td>'.$langs->trans('Parameter').'</td><td>'.$langs->trans('Value').'</td><td>'.$langs->trans('MCPConnectorSettingDescription').'</td></tr>';
+print '<tr><td>'.$langs->trans('MCPConnectorEnabled').'</td><td><input type="checkbox" name="enabled" value="1"'.(!empty($config['enabled']) ? ' checked' : '').'></td><td class="opacitymedium">'.$langs->trans('MCPConnectorEnabledDesc').'</td></tr>';
+print '<tr><td>'.$langs->trans('MCPConnectorReadOnly').'</td><td><input type="checkbox" checked disabled> '.$langs->trans('MCPConnectorReadOnlyForced').'<input type="hidden" name="readonly" value="1"></td><td class="opacitymedium">'.$langs->trans('MCPConnectorReadOnlyDesc').'</td></tr>';
+print '<tr><td>'.$langs->trans('MCPConnectorDolibarrBaseUrl').'</td><td><input class="minwidth500" type="text" name="dolibarr_base_url" value="'.dol_escape_htmltag($config['dolibarr_base_url']).'"></td><td class="opacitymedium">'.$langs->trans('MCPConnectorDolibarrBaseUrlDesc').'</td></tr>';
+print '<tr><td>'.$langs->trans('MCPConnectorDolibarrApiUrl').'</td><td><input class="minwidth500" type="text" name="dolibarr_api_url" value="'.dol_escape_htmltag($config['dolibarr_api_url']).'"></td><td class="opacitymedium">'.$langs->trans('MCPConnectorDolibarrApiUrlDesc').'</td></tr>';
+print '<tr><td>'.$langs->trans('MCPConnectorApiUser').'</td><td>'.$form->select_dolusers($config['api_user_id'], 'api_user_id', 1, null, 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth500').'</td><td class="opacitymedium">'.$langs->trans('MCPConnectorApiUserDesc').'</td></tr>';
+print '<tr><td>'.$langs->trans('MCPConnectorApiKey').'</td><td><input class="minwidth300" type="password" name="api_key" value="" autocomplete="new-password"> '.(McpConnectorConfig::hasApiKey() ? $langs->trans('MCPConnectorSecretStored') : $langs->trans('MCPConnectorNoApiKeyConfigured')).'<br><span class="opacitymedium">'.$langs->trans('MCPConnectorApiKeyHelp').'</span></td><td class="opacitymedium">'.$langs->trans('MCPConnectorApiKeyDesc').'</td></tr>';
 print '<tr><td>'.$langs->trans('MCPConnectorEntityMode').'</td><td><select name="entity_mode">';
 print '<option value="current_user_entity"'.($config['entity_mode'] === 'current_user_entity' ? ' selected' : '').'>'.$langs->trans('MCPConnectorCurrentUserEntity').'</option>';
 print '<option value="fixed_entity"'.($config['entity_mode'] === 'fixed_entity' ? ' selected' : '').'>'.$langs->trans('MCPConnectorFixedEntity').'</option>';
-print '</select></td></tr>';
-print '<tr><td>'.$langs->trans('MCPConnectorPublicUrl').'</td><td><input class="minwidth500" type="text" name="public_url" value="'.dol_escape_htmltag($config['public_url']).'"></td></tr>';
-print '<tr><td>'.$langs->trans('MCPConnectorNodePort').'</td><td><input class="width75" type="number" min="1" name="node_port" value="'.((int) $config['node_port']).'"></td></tr>';
+print '</select></td><td class="opacitymedium">'.$langs->trans('MCPConnectorEntityModeDesc').'</td></tr>';
+print '<tr><td>'.$langs->trans('MCPConnectorPublicUrl').'</td><td><input class="minwidth500" type="text" name="public_url" value="'.dol_escape_htmltag($config['public_url']).'"></td><td class="opacitymedium">'.$langs->trans('MCPConnectorPublicUrlDesc').'</td></tr>';
+print '<tr><td>'.$langs->trans('MCPConnectorNodePort').'</td><td><input class="width75" type="number" min="1" name="node_port" value="'.((int) $config['node_port']).'"></td><td class="opacitymedium">'.$langs->trans('MCPConnectorNodePortDesc').'</td></tr>';
 print '<tr><td>'.$langs->trans('MCPConnectorAllowedTools').'</td><td>';
 foreach ($toolCatalog as $name => $tool) {
 	print '<label class="marginrightonly">';
@@ -128,9 +129,9 @@ foreach ($toolCatalog as $name => $tool) {
 	print dol_escape_htmltag($name);
 	print '</label><br>';
 }
-print '</td></tr>';
-print '<tr><td>'.$langs->trans('MCPConnectorLogEnabled').'</td><td><input type="checkbox" name="log_enabled" value="1"'.(!empty($config['log_enabled']) ? ' checked' : '').'></td></tr>';
-print '<tr><td>'.$langs->trans('MCPConnectorLogRetentionDays').'</td><td><input class="width75" type="number" min="1" name="log_retention_days" value="'.((int) $config['log_retention_days']).'"></td></tr>';
+print '</td><td class="opacitymedium">'.$langs->trans('MCPConnectorAllowedToolsDesc').'</td></tr>';
+print '<tr><td>'.$langs->trans('MCPConnectorLogEnabled').'</td><td><input type="checkbox" name="log_enabled" value="1"'.(!empty($config['log_enabled']) ? ' checked' : '').'></td><td class="opacitymedium">'.$langs->trans('MCPConnectorLogEnabledDesc').'</td></tr>';
+print '<tr><td>'.$langs->trans('MCPConnectorLogRetentionDays').'</td><td><input class="width75" type="number" min="1" name="log_retention_days" value="'.((int) $config['log_retention_days']).'"></td><td class="opacitymedium">'.$langs->trans('MCPConnectorLogRetentionDaysDesc').'</td></tr>';
 print '</table>';
 print '<div class="center">';
 print '<button class="button button-save" type="submit">'.$langs->trans('MCPConnectorSave').'</button>';
