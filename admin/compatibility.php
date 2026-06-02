@@ -1,8 +1,18 @@
 <?php
 /* Copyright (C) 2026 Pierre Ardoin <developpeur@lesmetiersdubatiment.fr> */
 
+$res = 0;
+if (!$res && file_exists(__DIR__.'/../../../main.inc.php')) {
+	$res = require __DIR__.'/../../../main.inc.php';
+}
+if (!$res && file_exists(__DIR__.'/../../main.inc.php')) {
+	$res = require __DIR__.'/../../main.inc.php';
+}
+if (!$res) {
+	die('Include of main.inc.php fails');
+}
+
 require_once __DIR__.'/../lib/mcpconnector.lib.php';
-mcpconnector_include_main();
 
 dol_include_once('/mcpconnector/lib/mcpconnector_admin.lib.php');
 dol_include_once('/mcpconnector/lib/mcpconnector_compatibility.lib.php');

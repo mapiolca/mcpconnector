@@ -6,26 +6,6 @@
  */
 
 /**
- * Include Dolibarr main.inc.php from module pages.
- *
- * @return int
- */
-function mcpconnector_include_main()
-{
-	$res = 0;
-	if (!$res && file_exists(__DIR__.'/../../../main.inc.php')) {
-		$res = @include __DIR__.'/../../../main.inc.php';
-	}
-	if (!$res && file_exists(__DIR__.'/../../main.inc.php')) {
-		$res = @include __DIR__.'/../../main.inc.php';
-	}
-	if (!$res && file_exists(__DIR__.'/../../../../main.inc.php')) {
-		$res = @include __DIR__.'/../../../../main.inc.php';
-	}
-	return $res;
-}
-
-/**
  * Check a flat module right like mcpconnector->setup.
  *
  * @param User   $user  User object
